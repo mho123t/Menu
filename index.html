@@ -1,185 +1,927 @@
-
-```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>مطعم ريدان للمندي</title>
-  <style>
-    body {
-      font-family: 'Tajawal', sans-serif;
-      background-color: #fffaf5;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-    header {
-      background-color: #d64933;
-      color: white;
-      text-align: center;
-      padding: 1em;
-    }
-    .container {
-      padding: 1em;
-    }
-    .item {
-      border: 1px solid #ccc;
-      margin-bottom: 1em;
-      padding: 1em;
-      border-radius: 8px;
-      background: #fff;
-    }
-    .btn {
-      display: inline-block;
-      padding: 0.5em 1em;
-      margin-top: 0.5em;
-      background-color: #d64933;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .cart {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: #fff;
-      border: 2px solid #d64933;
-      padding: 1em;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    input, select {
-      width: 100%;
-      padding: 0.5em;
-      margin: 0.3em 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .status {
-      display: none;
-      color: green;
-      font-weight: bold;
-    }
-    @media (max-width: 600px) {
-      .cart {
-        width: 90%;
-        left: 5%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مطعم ريدان للمندي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #c52d2f;
+            --secondary-color: #e6a756;
+            --dark-color: #3a2e24;
+            --light-color: #f8f1e5;
+            --success-color: #4caf50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        .cart-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .container {
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .menu-categories {
+            display: flex;
+            overflow-x: auto;
+            gap: 0.5rem;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+        }
+        
+        .category-btn {
+            background-color: white;
+            border: 1px solid var(--secondary-color);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        
+        .category-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .menu-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .menu-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .menu-card-content {
+            padding: 1rem;
+        }
+        
+        .menu-card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .menu-card-desc {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .menu-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .menu-card-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .add-to-cart {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: var(--primary-color);
+        }
+        
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: flex-end;
+            z-index: 1000;
+        }
+        
+        .cart-container {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            padding: 1rem;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .cart-items {
+            margin-bottom: 1rem;
+        }
+        
+        .cart-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-left: 1rem;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .cart-item-price {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .quantity-btn {
+            background-color: #f0f0f0;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .quantity {
+            margin: 0 0.5rem;
+        }
+        
+        .remove-item {
+            color: #ff5252;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        
+        .cart-summary {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        
+        .checkout-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 1rem;
+            width: 100%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: var(--dark-color);
+        }
+        
+        .order-type {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        
+        .order-type-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .order-type-btn:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .order-type-btn:last-child {
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .order-type-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .order-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1001;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+        
+        .cartoon-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cartoon-effect::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 25%, transparent 25%) -50px 0,
+                        linear-gradient(225deg, rgba(255,255,255,0.2) 25%, transparent 25%) -50px 0,
+                        linear-gradient(315deg, rgba(255,255,255,0.2) 25%, transparent 25%),
+                        linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%);
+            background-size: 100px 100px;
+            z-index: -1;
+        }
+        
+        .special-offer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .menu-items {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .cart-container {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<header>
-  <h1>مطعم ريدان للمندي</h1>
-  <p>كل الأسعار شاملة الضريبة</p>
-</header>
-
-<div class="container">
-  <!-- نموذج الطلب -->
-  <div>
-    <label><input type="radio" name="delivery" value="pickup" checked /> استلام من المحل</label>
-    <label><input type="radio" name="delivery" value="reserve" /> حجز موعد</label>
-    <div id="pickupForm">
-      <input type="text" id="namePickup" placeholder="الاسم" />
-      <input type="tel" id="phonePickup" placeholder="رقم الهاتف" />
-      <input type="number" id="tablePickup" placeholder="رقم الطاولة" />
+    <header class="cartoon-effect">
+        <div class="logo">مطعم <span>ريدان</span> للمندي</div>
+        <div class="cart-icon" id="cartIcon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="menu-categories">
+            <button class="category-btn active" data-category="all">الكل</button>
+            <button class="category-btn" data-category="mendi">المندي</button>
+            <button class="category-btn" data-category="kabsa">الكبسة</button>
+            <button class="category-btn" data-category="mandi">المندي</button>
+            <button class="category-btn" data-category="haneeth">الحنيذ</button>
+            <button class="category-btn" data-category="drinks">المشروبات</button>
+        </div>
+        
+        <div class="menu-items" id="menuItems">
+            <!-- Menu items will be added dynamically -->
+        </div>
     </div>
-    <div id="reserveForm" style="display:none;">
-      <input type="text" id="nameReserve" placeholder="الاسم" />
-      <input type="tel" id="phoneReserve" placeholder="رقم الهاتف" />
-      <input type="datetime-local" id="timeReserve" />
+    
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="cart-container">
+            <div class="cart-header">
+                <h2 class="cart-title">سلة المشتريات</h2>
+                <button class="close-cart" id="closeCart">&times;</button>
+            </div>
+            
+            <div class="order-type">
+                <button class="order-type-btn active" data-type="pickup">استلام من المحل</button>
+                <button class="order-type-btn" data-type="dinein">الأكل في المطعم</button>
+                <button class="order-type-btn" data-type="reservation">حجز</button>
+            </div>
+            
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be added dynamically -->
+            </div>
+            
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>المجموع:</span>
+                    <span id="subtotal">0 ر.س</span>
+                </div>
+                <div class="summary-row">
+                    <span>الضريبة:</span>
+                    <span id="tax">0 ر.س</span>
+                </div>
+                <div class="summary-row total">
+                    <span>الإجمالي:</span>
+                    <span id="total">0 ر.س</span>
+                </div>
+            </div>
+            
+            <div id="pickupForm">
+                <div class="form-group">
+                    <label for="pickupName">الاسم</label>
+                    <input type="text" id="pickupName" placeholder="ادخل اسمك">
+                </div>
+                <div class="form-group">
+                    <label for="pickupPhone">رقم الجوال</label>
+                    <input type="tel" id="pickupPhone" placeholder="ادخل رقم الجوال">
+                </div>
+            </div>
+            
+            <div id="dineinForm" style="display: none;">
+                <div class="form-group">
+                    <label for="dineinName">الاسم</label>
+                    <input type="text" id="dineinName" placeholder="ادخل اسمك">
+                </div>
+                <div class="form-group">
+                    <label for="dineinPhone">رقم الجوال</label>
+                    <input type="tel" id="dineinPhone" placeholder="ادخل رقم الجوال">
+                </div>
+                <div class="form-group">
+                    <label for="tableNumber">رقم الطاولة</label>
+                    <input type="text" id="tableNumber" placeholder="ادخل رقم الطاولة">
+                </div>
+            </div>
+            
+            <div id="reservationForm" style="display: none;">
+                <div class="form-group">
+                    <label for="reservationName">الاسم</label>
+                    <input type="text" id="reservationName" placeholder="ادخل اسمك">
+                </div>
+                <div class="form-group">
+                    <label for="reservationPhone">رقم الجوال</label>
+                    <input type="tel" id="reservationPhone" placeholder="ادخل رقم الجوال">
+                </div>
+                <div class="form-group">
+                    <label for="reservationDate">التاريخ</label>
+                    <input type="date" id="reservationDate">
+                </div>
+                <div class="form-group">
+                    <label for="reservationTime">الوقت</label>
+                    <input type="time" id="reservationTime">
+                </div>
+                <div class="form-group">
+                    <label for="reservationPersons">عدد الأشخاص</label>
+                    <input type="number" id="reservationPersons" min="1" value="1">
+                </div>
+            </div>
+            
+            <button class="checkout-btn" id="checkoutBtn">تأكيد الطلب</button>
+        </div>
     </div>
-  </div>
-
-  <!-- قائمة الطعام -->
-  <h2>وجبات الدجاج</h2>
-  <div class="item" data-name="Chicken Mandi" data-price="33">
-    Chicken Mandi - 33 درهم<button class="btn">إضافة إلى السلة</button>
-  </div>
-  <div class="item" data-name="Chicken Madbi" data-price="35">
-    Chicken Madbi - 35 درهم<button class="btn">إضافة إلى السلة</button>
-  </div>
-
-  <h2>وجبات اللحم</h2>
-  <div class="item" data-name="Mutton Mandi" data-price="50">
-    Mutton Mandi - 50 درهم<button class="btn">إضافة إلى السلة</button>
-  </div>
-
-  <!-- سلة المشتريات -->
-  <div class="cart">
-    <h3>سلة المشتريات</h3>
-    <ul id="cartList"></ul>
-    <button onclick="submitOrder()" class="btn">تقديم الطلب</button>
-    <p id="orderStatus" class="status">✅ تم قبول الطلب!</p>
-  </div>
-</div>
-
-<script>
-  const cart = [];
-
-  document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.textContent === 'إضافة إلى السلة') {
-        const item = btn.parentElement;
-        const name = item.dataset.name;
-        const price = item.dataset.price;
-        cart.push({ name, price });
-        updateCart();
-      }
-    });
-  });
-
-  function updateCart() {
-    const list = document.getElementById('cartList');
-    list.innerHTML = '';
-    cart.forEach((item, index) => {
-      list.innerHTML += `<li>${item.name} - ${item.price} د.إ</li>`;
-    });
-  }
-
-  // اختيار نوع الاستلام
-  document.querySelectorAll('input[name="delivery"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      document.getElementById('pickupForm').style.display = radio.value === 'pickup' ? 'block' : 'none';
-      document.getElementById('reserveForm').style.display = radio.value === 'reserve' ? 'block' : 'none';
-    });
-  });
-
-  function submitOrder() {
-    const pickup = document.querySelector('input[name="delivery"]:checked').value;
-
-    let customerData = {};
-    if (pickup === 'pickup') {
-      customerData = {
-        name: document.getElementById('namePickup').value,
-        phone: document.getElementById('phonePickup').value,
-        table: document.getElementById('tablePickup').value
-      };
-    } else {
-      customerData = {
-        name: document.getElementById('nameReserve').value,
-        phone: document.getElementById('phoneReserve').value,
-        time: document.getElementById('timeReserve').value
-      };
-    }
-
-    const order = { customer: customerData, items: cart };
-
-    fetch('http://localhost:3000/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(order)
-    }).then(() => {
-      document.getElementById('orderStatus').style.display = 'block';
-      setTimeout(() => document.getElementById('orderStatus').style.display = 'none', 3000);
-      cart.length = 0;
-      updateCart();
-    });
-  }
-</script>
-
+    
+    <div class="order-status" id="orderStatus">
+        <i class="fas fa-check-circle"></i> تم إرسال طلبك بنجاح!
+    </div>
+    
+    <script>
+        // Menu data
+        const menuItems = [
+            {
+                id: 1,
+                title: "مندي لحم",
+                description: "لحم ضأن مطبوخ بطريقة المندي التقليدية مع الأرز البسمتي",
+                price: 45,
+                category: "mendi",
+                image: "https://via.placeholder.com/300x200?text=مندي+لحم"
+            },
+            {
+                id: 2,
+                title: "مندي دجاج",
+                description: "دجاج كامل مشوي بطريقة المندي مع الأرز البسمتي",
+                price: 35,
+                category: "mendi",
+                image: "https://via.placeholder.com/300x200?text=مندي+دجاج",
+                special: true
+            },
+            {
+                id: 3,
+                title: "كبسة لحم",
+                description: "لحم ضأن مع الأرز الكبسة المميزة بمذاقها الفريد",
+                price: 40,
+                category: "kabsa",
+                image: "https://via.placeholder.com/300x200?text=كبسة+لحم"
+            },
+            {
+                id: 4,
+                title: "كبسة دجاج",
+                description: "دجاج كامل مع الأرز الكبسة المميزة بمذاقها الفريد",
+                price: 30,
+                category: "kabsa",
+                image: "https://via.placeholder.com/300x200?text=كبسة+دجاج"
+            },
+            {
+                id: 5,
+                title: "حنيذ لحم",
+                description: "لحم ضأن مطبوخ بطريقة الحنيذ التقليدية مع الأرز البسمتي",
+                price: 50,
+                category: "haneeth",
+                image: "https://via.placeholder.com/300x200?text=حنيذ+لحم",
+                special: true
+            },
+            {
+                id: 6,
+                title: "مندي لحم عجل",
+                description: "لحم عجل مطبوخ بطريقة المندي التقليدية مع الأرز البسمتي",
+                price: 55,
+                category: "mendi",
+                image: "https://via.placeholder.com/300x200?text=مندي+عجل"
+            },
+            {
+                id: 7,
+                title: "عصير ليمون",
+                description: "عصير ليمون طازج مع النعناع",
+                price: 8,
+                category: "drinks",
+                image: "https://via.placeholder.com/300x200?text=عصير+ليمون"
+            },
+            {
+                id: 8,
+                title: "عصير برتقال",
+                description: "عصير برتقال طازج",
+                price: 8,
+                category: "drinks",
+                image: "https://via.placeholder.com/300x200?text=عصير+برتقال"
+            }
+        ];
+        
+        // DOM elements
+        const menuItemsContainer = document.getElementById('menuItems');
+        const cartOverlay = document.getElementById('cartOverlay');
+        const cartIcon = document.getElementById('cartIcon');
+        const closeCart = document.getElementById('closeCart');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const cartCount = document.getElementById('cartCount');
+        const subtotalElement = document.getElementById('subtotal');
+        const taxElement = document.getElementById('tax');
+        const totalElement = document.getElementById('total');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const orderStatus = document.getElementById('orderStatus');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const orderTypeButtons = document.querySelectorAll('.order-type-btn');
+        const pickupForm = document.getElementById('pickupForm');
+        const dineinForm = document.getElementById('dineinForm');
+        const reservationForm = document.getElementById('reservationForm');
+        
+        // Cart state
+        let cart = [];
+        
+        // Initialize the menu
+        function initMenu() {
+            menuItemsContainer.innerHTML = '';
+            
+            menuItems.forEach(item => {
+                const menuCard = document.createElement('div');
+                menuCard.className = 'menu-card';
+                menuCard.dataset.category = item.category;
+                
+                let specialBadge = '';
+                if (item.special) {
+                    specialBadge = '<div class="special-offer">عرض خاص</div>';
+                }
+                
+                menuCard.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    ${specialBadge}
+                    <div class="menu-card-content">
+                        <h3 class="menu-card-title">${item.title}</h3>
+                        <p class="menu-card-desc">${item.description}</p>
+                        <div class="menu-card-footer">
+                            <span class="menu-card-price">${item.price} ر.س</span>
+                            <button class="add-to-cart" data-id="${item.id}">أضف إلى السلة</button>
+                        </div>
+                    </div>
+                `;
+                
+                menuItemsContainer.appendChild(menuCard);
+            });
+            
+            // Add event listeners to add to cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+        }
+        
+        // Add item to cart
+        function addToCart(e) {
+            const itemId = parseInt(e.target.dataset.id);
+            const item = menuItems.find(item => item.id === itemId);
+            
+            const existingItem = cart.find(cartItem => cartItem.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showOrderStatus('تم إضافة العنصر إلى السلة');
+        }
+        
+        // Update cart UI
+        function updateCart() {
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p>السلة فارغة</p>';
+                cartCount.textContent = '0';
+                subtotalElement.textContent = '0 ر.س';
+                taxElement.textContent = '0 ر.س';
+                totalElement.textContent = '0 ر.س';
+                return;
+            }
+            
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="cart-item-img">
+                    <div class="cart-item-details">
+                        <h4 class="cart-item-title">${item.title}</h4>
+                        <span class="cart-item-price">${item.price} ر.س</span>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" data-id="${item.id}" data-action="decrease">-</button>
+                            <span class="quantity">${item.quantity}</span>
+                            <button class="quantity-btn" data-id="${item.id}" data-action="increase">+</button>
+                        </div>
+                        <span class="remove-item" data-id="${item.id}">إزالة</span>
+                    </div>
+                `;
+                
+                cartItemsContainer.appendChild(cartItem);
+            });
+            
+            const tax = subtotal * 0.15;
+            const total = subtotal + tax;
+            
+            subtotalElement.textContent = `${subtotal.toFixed(2)} ر.س`;
+            taxElement.textContent = `${tax.toFixed(2)} ر.س`;
+            totalElement.textContent = `${total.toFixed(2)} ر.س`;
+            cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            // Add event listeners to quantity buttons
+            document.querySelectorAll('.quantity-btn').forEach(button => {
+                button.addEventListener('click', updateQuantity);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', removeItem);
+            });
+        }
+        
+        // Update item quantity
+        function updateQuantity(e) {
+            const itemId = parseInt(e.target.dataset.id);
+            const action = e.target.dataset.action;
+            
+            const item = cart.find(item => item.id === itemId);
+            
+            if (action === 'increase') {
+                item.quantity += 1;
+            } else if (action === 'decrease' && item.quantity > 1) {
+                item.quantity -= 1;
+            }
+            
+            updateCart();
+        }
+        
+        // Remove item from cart
+        function removeItem(e) {
+            const itemId = parseInt(e.target.dataset.id);
+            cart = cart.filter(item => item.id !== itemId);
+            updateCart();
+            showOrderStatus('تم إزالة العنصر من السلة');
+        }
+        
+        // Show order status notification
+        function showOrderStatus(message) {
+            orderStatus.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            orderStatus.style.display = 'block';
+            
+            setTimeout(() => {
+                orderStatus.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Filter menu by category
+        function filterMenu(category) {
+            const menuCards = document.querySelectorAll('.menu-card');
+            
+            menuCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Handle checkout
+        function handleCheckout() {
+            const activeType = document.querySelector('.order-type-btn.active').dataset.type;
+            
+            let isValid = true;
+            let customerInfo = {};
+            
+            if (activeType === 'pickup') {
+                const name = document.getElementById('pickupName').value;
+                const phone = document.getElementById('pickupPhone').value;
+                
+                if (!name || !phone) {
+                    isValid = false;
+                    showOrderStatus('الرجاء إدخال الاسم ورقم الجوال');
+                } else {
+                    customerInfo = { name, phone };
+                }
+            } else if (activeType === 'dinein') {
+                const name = document.getElementById('dineinName').value;
+                const phone = document.getElementById('dineinPhone').value;
+                const tableNumber = document.getElementById('tableNumber').value;
+                
+                if (!name || !phone || !tableNumber) {
+                    isValid = false;
+                    showOrderStatus('الرجاء إدخال جميع المعلومات');
+                } else {
+                    customerInfo = { name, phone, tableNumber };
+                }
+            } else if (activeType === 'reservation') {
+                const name = document.getElementById('reservationName').value;
+                const phone = document.getElementById('reservationPhone').value;
+                const date = document.getElementById('reservationDate').value;
+                const time = document.getElementById('reservationTime').value;
+                const persons = document.getElementById('reservationPersons').value;
+                
+                if (!name || !phone || !date || !time || !persons) {
+                    isValid = false;
+                    showOrderStatus('الرجاء إدخال جميع معلومات الحجز');
+                } else {
+                    customerInfo = { name, phone, date, time, persons };
+                }
+            }
+            
+            if (isValid && cart.length > 0) {
+                // In a real app, you would send this data to the server
+                const order = {
+                    type: activeType,
+                    items: cart,
+                    customer: customerInfo,
+                    subtotal: parseFloat(subtotalElement.textContent),
+                    tax: parseFloat(taxElement.textContent),
+                    total: parseFloat(totalElement.textContent),
+                    status: 'pending',
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('Order submitted:', order);
+                
+                // Save to localStorage (for demo purposes)
+                saveOrder(order);
+                
+                // Reset cart
+                cart = [];
+                updateCart();
+                cartOverlay.style.display = 'none';
+                
+                showOrderStatus('تم إرسال طلبك بنجاح! سيتم تجهيزه قريباً');
+                
+                // Reset forms
+                document.getElementById('pickupName').value = '';
+                document.getElementById('pickupPhone').value = '';
+                document.getElementById('dineinName').value = '';
+                document.getElementById('dineinPhone').value = '';
+                document.getElementById('tableNumber').value = '';
+                document.getElementById('reservationName').value = '';
+                document.getElementById('reservationPhone').value = '';
+                document.getElementById('reservationDate').value = '';
+                document.getElementById('reservationTime').value = '';
+                document.getElementById('reservationPersons').value = '1';
+            } else if (cart.length === 0) {
+                showOrderStatus('السلة فارغة، الرجاء إضافة عناصر أولاً');
+            }
+        }
+        
+        // Save order to localStorage
+        function saveOrder(order) {
+            let orders = JSON.parse(localStorage.getItem('redanOrders')) || [];
+            orders.push(order);
+            localStorage.setItem('redanOrders', JSON.stringify(orders));
+        }
+        
+        // Event listeners
+        cartIcon.addEventListener('click', () => {
+            cartOverlay.style.display = 'flex';
+        });
+        
+        closeCart.addEventListener('click', () => {
+            cartOverlay.style.display = 'none';
+        });
+        
+        checkoutBtn.addEventListener('click', handleCheckout);
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                filterMenu(button.dataset.category);
+            });
+        });
+        
+        orderTypeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                orderTypeButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                pickupForm.style.display = 'none';
+                dineinForm.style.display = 'none';
+                reservationForm.style.display = 'none';
+                
+                if (button.dataset.type === 'pickup') {
+                    pickupForm.style.display = 'block';
+                } else if (button.dataset.type === 'dinein') {
+                    dineinForm.style.display = 'block';
+                } else if (button.dataset.type === 'reservation') {
+                    reservationForm.style.display = 'block';
+                }
+            });
+        });
+        
+        // Initialize the app
+        initMenu();
+    </script>
 </body>
 </html>
