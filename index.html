@@ -1,108 +1,185 @@
+
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <!-- باقي الhead كما هو -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>مطعم ريدان للمندي</title>
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #fffaf5;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #d64933;
+      color: white;
+      text-align: center;
+      padding: 1em;
+    }
+    .container {
+      padding: 1em;
+    }
+    .item {
+      border: 1px solid #ccc;
+      margin-bottom: 1em;
+      padding: 1em;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.5em 1em;
+      margin-top: 0.5em;
+      background-color: #d64933;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cart {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #fff;
+      border: 2px solid #d64933;
+      padding: 1em;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5em;
+      margin: 0.3em 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .status {
+      display: none;
+      color: green;
+      font-weight: bold;
+    }
+    @media (max-width: 600px) {
+      .cart {
+        width: 90%;
+        left: 5%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- باقي الهيكل كما هو -->
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... الكود السابق ...
+<header>
+  <h1>مطعم ريدان للمندي</h1>
+  <p>كل الأسعار شاملة الضريبة</p>
+</header>
 
-            // Submit order - تم التعديل هنا
-            submitBtn.addEventListener('click', () => {
-                const name = document.getElementById('customer-name').value;
-                const phone = document.getElementById('customer-phone').value;
-                const orderType = document.querySelector('.order-type-btn.active').getAttribute('data-type');
-                const address = document.getElementById('delivery-address').value;
-                const tableNumber = document.getElementById('table-number').value;
-                const notes = document.getElementById('order-notes').value;
-                
-                if (!name || !phone) {
-                    showNotification('الرجاء إدخال الاسم ورقم الهاتف', 'error');
-                    return;
-                }
-                
-                if (orderType === 'delivery' && !address) {
-                    showNotification('الرجاء إدخال عنوان التوصيل', 'error');
-                    return;
-                }
-                
-                if (orderType === 'dine-in' && !tableNumber) {
-                    showNotification('الرجاء إدخال رقم الطاولة', 'error');
-                    return;
-                }
-                
-                // إنشاء رقم طلب فريد
-                const orderId = Date.now();
-                
-                const order = {
-                    id: orderId,
-                    name,
-                    phone,
-                    orderType,
-                    address: orderType === 'delivery' ? address : null,
-                    tableNumber: orderType === 'dine-in' ? tableNumber : null,
-                    notes,
-                    items: cart,
-                    total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-                    status: 'pending',
-                    timestamp: new Date().toISOString()
-                };
-                
-                // حفظ الطلب في localStorage
-                const orders = JSON.parse(localStorage.getItem('restaurant-orders') || []);
-                orders.push(order);
-                localStorage.setItem('restaurant-orders', JSON.stringify(orders));
-                
-                // إرسال إشعار إلى صفحة المسؤول
-                const newOrders = JSON.parse(localStorage.getItem('new-orders') || []);
-                newOrders.push(orderId);
-                localStorage.setItem('new-orders', JSON.stringify(newOrders));
-                localStorage.setItem('new-order-notification', 'true');
-                
-                // Reset and close
-                cart = [];
-                updateCart();
-                orderModal.classList.remove('open');
-                document.querySelector('form').reset();
-                
-                showNotification('تم استلام طلبك بنجاح! رقم الطلب: #' + orderId.toString().slice(-6), 'success');
-            });
+<div class="container">
+  <!-- نموذج الطلب -->
+  <div>
+    <label><input type="radio" name="delivery" value="pickup" checked /> استلام من المحل</label>
+    <label><input type="radio" name="delivery" value="reserve" /> حجز موعد</label>
+    <div id="pickupForm">
+      <input type="text" id="namePickup" placeholder="الاسم" />
+      <input type="tel" id="phonePickup" placeholder="رقم الهاتف" />
+      <input type="number" id="tablePickup" placeholder="رقم الطاولة" />
+    </div>
+    <div id="reserveForm" style="display:none;">
+      <input type="text" id="nameReserve" placeholder="الاسم" />
+      <input type="tel" id="phoneReserve" placeholder="رقم الهاتف" />
+      <input type="datetime-local" id="timeReserve" />
+    </div>
+  </div>
 
-            // إصلاح مشكلة إضافة إلى السلة
-            document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', function() {
-                    const name = this.getAttribute('data-name');
-                    const price = parseFloat(this.getAttribute('data-price'));
-                    
-                    // التأكد من أن البيانات موجودة
-                    if (!name || isNaN(price)) {
-                        console.error('بيانات المنتج غير صالحة');
-                        return;
-                    }
-                    
-                    // Check if item already in cart
-                    const existingItem = cart.find(item => item.name === name);
-                    
-                    if (existingItem) {
-                        existingItem.quantity += 1;
-                    } else {
-                        cart.push({
-                            name,
-                            price,
-                            quantity: 1
-                        });
-                    }
-                    
-                    updateCart();
-                    showNotification('تم إضافة المنتج إلى السلة بنجاح!');
-                });
-            });
+  <!-- قائمة الطعام -->
+  <h2>وجبات الدجاج</h2>
+  <div class="item" data-name="Chicken Mandi" data-price="33">
+    Chicken Mandi - 33 درهم<button class="btn">إضافة إلى السلة</button>
+  </div>
+  <div class="item" data-name="Chicken Madbi" data-price="35">
+    Chicken Madbi - 35 درهم<button class="btn">إضافة إلى السلة</button>
+  </div>
 
-            // ... باقي الكود ...
-        });
-    </script>
+  <h2>وجبات اللحم</h2>
+  <div class="item" data-name="Mutton Mandi" data-price="50">
+    Mutton Mandi - 50 درهم<button class="btn">إضافة إلى السلة</button>
+  </div>
+
+  <!-- سلة المشتريات -->
+  <div class="cart">
+    <h3>سلة المشتريات</h3>
+    <ul id="cartList"></ul>
+    <button onclick="submitOrder()" class="btn">تقديم الطلب</button>
+    <p id="orderStatus" class="status">✅ تم قبول الطلب!</p>
+  </div>
+</div>
+
+<script>
+  const cart = [];
+
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.textContent === 'إضافة إلى السلة') {
+        const item = btn.parentElement;
+        const name = item.dataset.name;
+        const price = item.dataset.price;
+        cart.push({ name, price });
+        updateCart();
+      }
+    });
+  });
+
+  function updateCart() {
+    const list = document.getElementById('cartList');
+    list.innerHTML = '';
+    cart.forEach((item, index) => {
+      list.innerHTML += `<li>${item.name} - ${item.price} د.إ</li>`;
+    });
+  }
+
+  // اختيار نوع الاستلام
+  document.querySelectorAll('input[name="delivery"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.getElementById('pickupForm').style.display = radio.value === 'pickup' ? 'block' : 'none';
+      document.getElementById('reserveForm').style.display = radio.value === 'reserve' ? 'block' : 'none';
+    });
+  });
+
+  function submitOrder() {
+    const pickup = document.querySelector('input[name="delivery"]:checked').value;
+
+    let customerData = {};
+    if (pickup === 'pickup') {
+      customerData = {
+        name: document.getElementById('namePickup').value,
+        phone: document.getElementById('phonePickup').value,
+        table: document.getElementById('tablePickup').value
+      };
+    } else {
+      customerData = {
+        name: document.getElementById('nameReserve').value,
+        phone: document.getElementById('phoneReserve').value,
+        time: document.getElementById('timeReserve').value
+      };
+    }
+
+    const order = { customer: customerData, items: cart };
+
+    fetch('http://localhost:3000/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    }).then(() => {
+      document.getElementById('orderStatus').style.display = 'block';
+      setTimeout(() => document.getElementById('orderStatus').style.display = 'none', 3000);
+      cart.length = 0;
+      updateCart();
+    });
+  }
+</script>
+
 </body>
 </html>
